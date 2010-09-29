@@ -1,0 +1,57 @@
+//-----------------------------------------------------------------------
+// <copyright file="[AUTO:FILE]" company="[COMPANY NAME]">
+//     Copyright (c) [COMPANY NAME]. All rights reserved.
+// </copyright>
+// <link rel="website" href="[SITE]" />
+// <link rel="license" href="[LICENSE]" />
+// <author>[AUTHOR]</author>
+// <created>[AUTO:CREATION_DATE]</created>
+// <summary>[AUTO:SUMMARY]</summary>
+//-----------------------------------------------------------------------
+
+48 65 6C 6C 6F 20 57 6F 72 6C 64 21
+AUTO:FILE=<Automatically assigned>
+COMPANY NAME=Alex Lyman
+SITE=http://github.com/ALyman/NParse
+LICENSE=http://creativecommons.org/licenses/BSD/
+AUTHOR=Alex Lyman
+AUTO:CREATION_DATE=You can provide a format date here
+AUTO:SUMMARY=<Automatically assigned>
+46 69 6C 65 73 20 73 61 76 65 64 21
+D:\Projects\NParse
+D:\Projects\NParse\examples\SimpleParser\ParameterDiscoveryVisitor.cs
+D:\Projects\NParse\examples\SimpleParser\Program.cs
+D:\Projects\NParse\examples\SimpleParser\SimpleGrammar.cs
+D:\Projects\NParse\source\NParse\Future.cs
+D:\Projects\NParse\source\NParse\GrammarBase.cs
+D:\Projects\NParse\source\NParse\Grammars.cs
+D:\Projects\NParse\source\NParse\IComposite.cs
+D:\Projects\NParse\source\NParse\IGrammar.cs
+D:\Projects\NParse\source\NParse\ITokenizer.cs
+D:\Projects\NParse\source\NParse\Memoizer.cs
+D:\Projects\NParse\source\NParse\NotMemoizableAttribute.cs
+D:\Projects\NParse\source\NParse\ParseContext.cs
+D:\Projects\NParse\source\NParse\ParseExpressions.cs
+D:\Projects\NParse\source\NParse\ParseOptions.cs
+D:\Projects\NParse\source\NParse\Parser.cs
+D:\Projects\NParse\source\NParse\ParseScope.cs
+D:\Projects\NParse\source\NParse\SimpleTokenizer.cs
+D:\Projects\NParse\source\NParse\Token.cs
+D:\Projects\NParse\source\NParse\Ast\ChoiceParseNode.cs
+D:\Projects\NParse\source\NParse\Ast\ConcatParseNode.cs
+D:\Projects\NParse\source\NParse\Ast\ParseNode.cs
+D:\Projects\NParse\source\NParse\Ast\ParseNodeOfT.cs
+D:\Projects\NParse\source\NParse\Ast\ReductionParseNode.cs
+D:\Projects\NParse\source\NParse\Ast\TokenParseNode.cs
+D:\Projects\NParse\source\NParse\Expressions\ActionParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\ChoiceParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\ConcatParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\ParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\ParseExpressionOfT.cs
+D:\Projects\NParse\source\NParse\Expressions\ReduceParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\RuleParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\ScopeParseExpression.cs
+D:\Projects\NParse\source\NParse\Expressions\TokenParseExpression.cs
+D:\Projects\NParse\source\NParse\Utilities\AttributeUtilities.cs
+D:\Projects\NParse\source\NParse\Utilities\TypeUtilities.cs
+D:\Projects\NParse\source\NParse\Properties\AssemblyInfo.cs
