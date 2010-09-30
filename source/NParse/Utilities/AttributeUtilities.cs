@@ -10,13 +10,11 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace NParse.Utilities
 {
-    static class AttributeUtilities
+    internal static class AttributeUtilities
     {
         public static bool IsDefined<TAttribute>(this ICustomAttributeProvider customAttributeProvider, bool inherit)
             where TAttribute : Attribute

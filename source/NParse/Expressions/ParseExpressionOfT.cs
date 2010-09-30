@@ -8,11 +8,7 @@
 // <created>21/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using NParse.Ast;
 
 namespace NParse.Expressions
 {
@@ -23,17 +19,16 @@ namespace NParse.Expressions
     public abstract class ParseExpression<T> : ParseExpression
     {
         /// <summary>
-        /// Implements the operator |.
+        /// Implements the choice operator, |.
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
+        /// <param name="left">The left-side of the alternation.</param>
+        /// <param name="right">The right-side of the alternation.</param>
         /// <returns>The result of the operator.</returns>
         public static ParseExpression<T> operator |(ParseExpression<T> left, ParseExpression<T> right)
         {
             return new ChoiceParseExpression<T>(
                 left.GetChoiceExpressions<T>()
-                    .Concat(right.GetChoiceExpressions<T>())
-            );
+                    .Concat(right.GetChoiceExpressions<T>()));
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 //-----------------------------------------------------------------------
 // <copyright file="ConcatParseExpression.cs" company="Alex Lyman">
 //     Copyright (c) Alex Lyman. All rights reserved.
@@ -8,13 +9,11 @@
 // <created>21/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NParse.Ast;
-using System.Collections;
 using System.Text.RegularExpressions;
+using NParse.Ast;
 
 namespace NParse.Expressions
 {
@@ -23,14 +22,6 @@ namespace NParse.Expressions
     /// </summary>
     public class ConcatParseExpression : ParseExpression, IEnumerable<ParseExpression>
     {
-        /// <summary>
-        /// Gets a value indicating whether this instance is memoizable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
-        /// </value>
-        protected override bool IsMemoizable { get { return true; } }
-
         private ParseExpression[] expressions;
 
         /// <summary>
@@ -52,28 +43,12 @@ namespace NParse.Expressions
         }
 
         /// <summary>
-        /// Executes parsing in the given context.
+        /// Gets a value indicating whether this instance is memoizable.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>The resulting parse node.</returns>
-        protected override ParseNode ExecuteCore(ParseContext context)
-        {
-            using (var composite = context.BeginComposite())
-            {
-                List<ParseNode> nodes = new List<ParseNode>();
-                foreach (var expr in expressions)
-                {
-                    var node = expr.Execute(context);
-                    nodes.Add(node);
-                    if (!node.Success)
-                    {
-                        composite.Failed();
-                        break;
-                    }
-                }
-                return new ConcatParseNode(this, nodes.ToArray());
-            }
-        }
+        /// <value>
+        /// <c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
+        /// </value>
+        protected override bool IsMemoizable { get { return true; } }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -93,6 +68,17 @@ namespace NParse.Expressions
             sb.Length -= 3;
             sb.Append(")");
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets the potential first token regular expressions for this expression.
+        /// </summary>
+        /// <returns>
+        /// The regular expressions that represent the first tokens that match this expression.
+        /// </returns>
+        public override IEnumerable<Regex> GetFirst()
+        {
+            return expressions.First().GetFirst();
         }
 
         /// <summary>
@@ -118,14 +104,27 @@ namespace NParse.Expressions
         }
 
         /// <summary>
-        /// Gets the potential first token regular expressions for this expression.
+        /// Executes parsing in the given context.
         /// </summary>
-        /// <returns>
-        /// The regular expressions that represent the first tokens that match this expression.
-        /// </returns>
-        public override IEnumerable<Regex> GetFirst()
+        /// <param name="context">The context.</param>
+        /// <returns>The resulting parse node.</returns>
+        protected override ParseNode ExecuteCore(ParseContext context)
         {
-            return expressions.First().GetFirst();
+            using (var composite = context.BeginComposite())
+            {
+                List<ParseNode> nodes = new List<ParseNode>();
+                foreach (var expr in expressions)
+                {
+                    var node = expr.Execute(context);
+                    nodes.Add(node);
+                    if (!node.Success)
+                    {
+                        composite.Failed();
+                        break;
+                    }
+                }
+                return new ConcatParseNode(this, nodes.ToArray());
+            }
         }
     }
 }

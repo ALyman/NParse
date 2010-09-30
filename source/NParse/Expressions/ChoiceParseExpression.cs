@@ -1,3 +1,4 @@
+using System.Collections;
 //-----------------------------------------------------------------------
 // <copyright file="ChoiceParseExpression.cs" company="Alex Lyman">
 //     Copyright (c) Alex Lyman. All rights reserved.
@@ -8,13 +9,11 @@
 // <created>21/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NParse.Ast;
-using System.Collections;
 using System.Text.RegularExpressions;
+using NParse.Ast;
 
 namespace NParse.Expressions
 {
@@ -24,14 +23,6 @@ namespace NParse.Expressions
     /// <typeparam name="T">The type of value that the expression represents..</typeparam>
     public class ChoiceParseExpression<T> : ParseExpression<T>, IEnumerable<ParseExpression<T>>
     {
-        /// <summary>
-        /// Gets a value indicating whether this instance is memoizable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
-        /// </value>
-        protected override bool IsMemoizable { get { return true; } }
-
         private ParseExpression<T>[] expressions;
 
         /// <summary>
@@ -50,6 +41,66 @@ namespace NParse.Expressions
         public ChoiceParseExpression(IEnumerable<ParseExpression<T>> expressions)
         {
             this.expressions = expressions.ToArray();
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is memoizable.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
+        /// </value>
+        protected override bool IsMemoizable { get { return true; } }
+
+        /// <summary>
+        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String"/> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append("(");
+            foreach (var item in expressions)
+            {
+                sb.Append(item);
+                sb.Append(" | ");
+            }
+            sb.Length -= 3;
+            sb.Append(")");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Gets the potential first token regular expressions for this expression.
+        /// </summary>
+        /// <returns>
+        /// The regular expressions that represent the first tokens that match this expression.
+        /// </returns>
+        public override IEnumerable<Regex> GetFirst()
+        {
+            return expressions.SelectMany(e => e.GetFirst()).Distinct();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the potential expressions.
+        /// </summary>
+        /// An <see cref="T:System.Collections.IEnumerator&lt;ParseExpression&lt;T&gt;&gt;"/> object that can be used to iterate through the collection.
+        /// <returns>The enumerations of the potential expressions.</returns>
+        public IEnumerator<ParseExpression<T>> GetEnumerator()
+        {
+            return ((IEnumerable<ParseExpression<T>>)expressions).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the potential expressions.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
 
         /// <summary>
@@ -82,58 +133,6 @@ namespace NParse.Expressions
                 composite.Failed();
                 return new ChoiceParseNode<T>(this, nodes.ToArray());
             }
-        }
-
-        /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
-        /// </returns>
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append("(");
-            foreach (var item in expressions)
-            {
-                sb.Append(item);
-                sb.Append(" | ");
-            }
-            sb.Length -= 3;
-            sb.Append(")");
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the potential expressions.
-        /// </summary>
-        /// An <see cref="T:System.Collections.IEnumerator&lt;ParseExpression&lt;T&gt;&gt;"/> object that can be used to iterate through the collection.
-        /// <returns>The enumerations of the potential expressions.</returns>
-        public IEnumerator<ParseExpression<T>> GetEnumerator()
-        {
-            return ((IEnumerable<ParseExpression<T>>)expressions).GetEnumerator();
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the potential expressions.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
-
-        /// <summary>
-        /// Gets the potential first token regular expressions for this expression.
-        /// </summary>
-        /// <returns>
-        /// The regular expressions that represent the first tokens that match this expression.
-        /// </returns>
-        public override IEnumerable<Regex> GetFirst()
-        {
-            return expressions.SelectMany(e => e.GetFirst()).Distinct();
         }
     }
 }

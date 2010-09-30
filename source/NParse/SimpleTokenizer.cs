@@ -8,12 +8,10 @@
 // <created>22/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace NParse
 {
@@ -22,8 +20,8 @@ namespace NParse
     /// </summary>
     public sealed class SimpleTokenizer : ITokenizer
     {
-        IGrammar grammar;
-        string buffer;
+        private IGrammar grammar;
+        private string buffer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleTokenizer"/> class.
@@ -46,15 +44,17 @@ namespace NParse
         /// Looks ahead in the input for the specified possibilities, and returns all of them that occur at the current position.
         /// </summary>
         /// <param name="possibilities">The possibilities.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// All the tokens that match at the current position.
+        /// </returns>
         public IEnumerable<Token> LookAhead(params Regex[] possibilities)
         {
             if (grammar.Whitespace != null)
             {
-                var wsMatch = grammar.Whitespace.Match(buffer, Position);
-                if (wsMatch.Index == Position)
+                var whitespaceMatch = grammar.Whitespace.Match(buffer, Position);
+                if (whitespaceMatch.Index == Position)
                 {
-                    Position += wsMatch.Length;
+                    Position += whitespaceMatch.Length;
                 }
             }
 

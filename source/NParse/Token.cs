@@ -8,10 +8,6 @@
 // <created>22/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace NParse
@@ -22,25 +18,9 @@ namespace NParse
     public class Token
     {
         /// <summary>
-        /// Gets a value indicating whether this <see cref="Token"/> was successfully parsed.
+        /// A failure token.
         /// </summary>
-        /// <value><c>true</c> if success; otherwise, <c>false</c>.</value>
-        public bool Success { get; private set; }
-        /// <summary>
-        /// Gets or sets the source that this token was parsed for.
-        /// </summary>
-        /// <value>The source.</value>
-        public Regex Source { get; private set; }
-        /// <summary>
-        /// Gets or sets the text of the token.
-        /// </summary>
-        /// <value>The text.</value>
-        public string Text { get; private set; }
-        /// <summary>
-        /// Gets or sets the length of the token.
-        /// </summary>
-        /// <value>The length.</value>
-        public int Length { get; private set; }
+        public static readonly Token Failed = new Token { Success = false };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Token"/> class.
@@ -57,13 +37,29 @@ namespace NParse
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Token"/> class.
+        /// Prevents a default instance of the <see cref="Token"/> class from being created.
         /// </summary>
         private Token() { }
 
         /// <summary>
-        /// A failure token.
+        /// Gets a value indicating whether this <see cref="Token"/> was successfully parsed.
         /// </summary>
-        public static readonly Token Failed = new Token { Success = false };
+        /// <value><c>true</c> if success; otherwise, <c>false</c>.</value>
+        public bool Success { get; private set; }
+        /// <summary>
+        /// Gets the source that this token was parsed for.
+        /// </summary>
+        /// <value>The source.</value>
+        public Regex Source { get; private set; }
+        /// <summary>
+        /// Gets the text of the token.
+        /// </summary>
+        /// <value>The matched text of the token.</value>
+        public string Text { get; private set; }
+        /// <summary>
+        /// Gets the length of the token.
+        /// </summary>
+        /// <value>The length of the text matched.</value>
+        public int Length { get; private set; }
     }
 }

@@ -9,9 +9,6 @@
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NParse
 {
@@ -21,8 +18,8 @@ namespace NParse
     /// <typeparam name="T">The type of the value.</typeparam>
     public class Future<T>
     {
-        T value;
-        bool isSet = false;
+        private T value;
+        private bool isSet = false;
 
         /// <summary>
         /// Gets or sets the value.

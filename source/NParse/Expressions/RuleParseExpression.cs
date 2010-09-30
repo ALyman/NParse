@@ -11,11 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using NParse.Ast;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.ComponentModel;
+using NParse.Ast;
 using NParse.Utilities;
 
 namespace NParse.Expressions
@@ -26,45 +23,29 @@ namespace NParse.Expressions
     /// <typeparam name="T">The type of the value provided by this expression.</typeparam>
     public class RuleParseExpression<T> : ParseExpression<T>
     {
-        /// <summary>
-        /// Gets a value indicating whether this instance is memoizable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
-        /// </value>
-        protected override bool IsMemoizable
-        {
-            get
-            {
-                return !rule.Method.IsDefined<NotMemoizableAttribute>(true);
-            }
-        }
-
         private Func<ParseExpression<T>> rule;
+        private IEnumerable<Regex> first;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RuleParseExpression&lt;T&gt;"/> class.
         /// </summary>
-        /// <param name="rule">The rule.</param>
+        /// <param name="rule">The rule to be executed.</param>
         public RuleParseExpression(Func<ParseExpression<T>> rule)
         {
             this.rule = rule;
         }
 
         /// <summary>
-        /// Executes parsing in the given context.
+        /// Gets a value indicating whether this instance is memoizable.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>The resulting parse node.</returns>
-        protected override ParseNode ExecuteCore(ParseContext context)
+        /// <value>
+        /// <c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
+        /// </value>
+        protected override bool IsMemoizable
         {
-            using (var composite = context.BeginComposite())
+            get
             {
-                var expression = rule();
-                var result = expression.Execute(context);
-                if (!result.Success)
-                    composite.Failed();
-                return result;
+                return !rule.Method.IsDefined<NotMemoizableAttribute>(true);
             }
         }
 
@@ -78,8 +59,6 @@ namespace NParse.Expressions
         {
             return rule.Method.Name.ToLower();
         }
-
-        IEnumerable<Regex> first;
 
         /// <summary>
         /// Gets the potential first token regular expressions for this expression.
@@ -97,6 +76,23 @@ namespace NParse.Expressions
             }
 
             return first;
+        }
+
+        /// <summary>
+        /// Executes parsing in the given context.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>The resulting parse node.</returns>
+        protected override ParseNode ExecuteCore(ParseContext context)
+        {
+            using (var composite = context.BeginComposite())
+            {
+                var expression = rule();
+                var result = expression.Execute(context);
+                if (!result.Success)
+                    composite.Failed();
+                return result;
+            }
         }
     }
 }

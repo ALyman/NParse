@@ -1,14 +1,4 @@
-//-----------------------------------------------------------------------
-// <copyright file="ScopeParseExpression.cs" company="Alex Lyman">
-//     Copyright (c) Alex Lyman. All rights reserved.
-// </copyright>
-// <link rel="website" href="http://github.com/ALyman/NParse" />
-// <link rel="license" href="http://creativecommons.org/licenses/BSD/" />
-// <author>Alex Lyman</author>
-// <created>28/08/2010</created>
-// <summary>no summary</summary>
-//-----------------------------------------------------------------------
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NParse.Ast;
@@ -18,12 +8,13 @@ namespace NParse.Expressions
     /// <summary>
     /// An expression that reduces the contained expression to provide a value.
     /// </summary>
-    public sealed class ScopeParseExpression : ParseExpression
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    public sealed class ScopeParseExpression<TResult> : ParseExpression<TResult>
     {
-        private ParseExpression expression;
-        private bool isChild;
+        private ParseExpression<TResult> expression;
         private Action<ParseScope> initializer;
         private Action<ParseScope> finalizer;
+        private bool isChild;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScopeParseExpression"/> class.
@@ -32,7 +23,7 @@ namespace NParse.Expressions
         /// <param name="isChild">if set to <c>true</c> the scope is a child scope..</param>
         /// <param name="initializer">The initializer.</param>
         /// <param name="finalizer">The finalizer.</param>
-        public ScopeParseExpression(ParseExpression expression, bool isChild, Action<ParseScope> initializer, Action<ParseScope> finalizer)
+        public ScopeParseExpression(ParseExpression<TResult> expression, bool isChild, Action<ParseScope> initializer, Action<ParseScope> finalizer)
         {
             this.expression = expression;
             this.isChild = isChild;

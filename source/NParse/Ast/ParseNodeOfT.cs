@@ -34,7 +34,7 @@ namespace NParse.Ast
         }
 
         /// <summary>
-        /// Gets or sets the value.
+        /// Gets the value.
         /// </summary>
         /// <value>The value.</value>
         public T Value { get; private set; }

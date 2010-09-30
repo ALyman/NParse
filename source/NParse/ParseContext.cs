@@ -10,11 +10,6 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.IO;
-using System.Diagnostics;
 
 namespace NParse
 {
@@ -23,6 +18,8 @@ namespace NParse
     /// </summary>
     public class ParseContext
     {
+        private Stack<ParseScope> scopeStack = new Stack<ParseScope>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ParseContext"/> class.
         /// </summary>
@@ -45,6 +42,46 @@ namespace NParse
         }
 
         /// <summary>
+        /// Gets or sets the tokenizer.
+        /// </summary>
+        /// <value>The tokenizer.</value>
+        public ITokenizer Tokenizer { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
+        /// <value>The position.</value>
+        public int Position
+        {
+            get { return this.Tokenizer.Position; }
+            set { this.Tokenizer.Position = value; }
+        }
+
+        /// <summary>
+        /// Gets the options.
+        /// </summary>
+        /// <value>The options.</value>
+        public ParseOptions Options { get; private set; }
+
+        /// <summary>
+        /// Gets the memoizer.
+        /// </summary>
+        /// <value>The memoizer.</value>
+        public Memoizer Memoizer { get; private set; }
+
+        /// <summary>
+        /// Gets the current scope.
+        /// </summary>
+        /// <value>The scope.</value>
+        public ParseScope Scope
+        {
+            get
+            {
+                return scopeStack.Peek();
+            }
+        }
+
+        /// <summary>
         /// Begins a new composite region.
         /// </summary>
         /// <returns>The composite description.</returns>
@@ -54,9 +91,42 @@ namespace NParse
         }
 
         /// <summary>
+        /// Begins a new scope.
+        /// </summary>
+        /// <param name="isChild">if set to <c>true</c> the scope is a child.</param>
+        /// <returns>A new scope.</returns>
+        public ParseScope BeginScope(bool isChild)
+        {
+            ParseScope result;
+            if (isChild)
+            {
+                result = new ParseScope(this.Scope);
+            }
+            else
+            {
+                result = new ParseScope();
+            }
+            scopeStack.Push(result);
+            return result;
+        }
+
+        /// <summary>
+        /// Ends the scope.
+        /// </summary>
+        /// <param name="scope">The scope.</param>
+        public void EndScope(ParseScope scope)
+        {
+            if (scope != this.Scope)
+            {
+                throw new NotSupportedException();
+            }
+            scopeStack.Pop();
+        }
+
+        /// <summary>
         /// A composite region.
         /// </summary>
-        class Composite : IComposite
+        private class Composite : IComposite
         {
             private ParseContext parseContext;
             private int position;
@@ -91,81 +161,6 @@ namespace NParse
                     System.Diagnostics.Trace.WriteLineIf(parseContext.Options.Trace, "@" + position, "Backtrack");
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the tokenizer.
-        /// </summary>
-        /// <value>The tokenizer.</value>
-        public ITokenizer Tokenizer { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the position.
-        /// </summary>
-        /// <value>The position.</value>
-        public int Position
-        {
-            get { return this.Tokenizer.Position; }
-            set { this.Tokenizer.Position = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the options.
-        /// </summary>
-        /// <value>The options.</value>
-        public ParseOptions Options { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the memoizer.
-        /// </summary>
-        /// <value>The memoizer.</value>
-        public Memoizer Memoizer { get; private set; }
-
-        Stack<ParseScope> scopeStack = new Stack<ParseScope>();
-
-        /// <summary>
-        /// Gets the current scope.
-        /// </summary>
-        /// <value>The scope.</value>
-        public ParseScope Scope
-        {
-            get
-            {
-                return scopeStack.Peek();
-            }
-        }
-
-        /// <summary>
-        /// Begins a new scope.
-        /// </summary>
-        /// <param name="isChild">if set to <c>true</c> the scope is a child.</param>
-        /// <returns>A new scope.</returns>
-        public ParseScope BeginScope(bool isChild)
-        {
-            ParseScope result;
-            if (isChild)
-            {
-                result = new ParseScope(this.Scope);
-            }
-            else
-            {
-                result = new ParseScope();
-            }
-            scopeStack.Push(result);
-            return result;
-        }
-
-        /// <summary>
-        /// Ends the scope.
-        /// </summary>
-        /// <param name="scope">The scope.</param>
-        public void EndScope(ParseScope scope)
-        {
-            if (scope != this.Scope)
-            {
-                throw new NotSupportedException();
-            }
-            scopeStack.Pop();
         }
     }
 }

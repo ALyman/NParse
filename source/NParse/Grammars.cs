@@ -9,11 +9,8 @@
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NParse.Expressions;
 using System.Collections.ObjectModel;
+using NParse.Expressions;
 
 namespace NParse
 {

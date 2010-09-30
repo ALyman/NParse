@@ -11,11 +11,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using NParse.Expressions;
-using NParse.Utilities;
 using System.Linq.Expressions;
 using NParse.Ast;
+using NParse.Expressions;
+using NParse.Utilities;
 
 namespace NParse
 {
@@ -129,15 +128,17 @@ namespace NParse
         /// </returns>
         public static ParseExpression<TResult> Single<TResult>(this ConcatParseExpression expression)
         {
-            return new ReduceParseExpression<TResult>(expression, (context, sourceNode) =>
-            {
-                var concatSourceNode = sourceNode as ConcatParseNode;
+            return new ReduceParseExpression<TResult>(
+                expression,
+                (context, sourceNode) =>
+                {
+                    var concatSourceNode = sourceNode as ConcatParseNode;
 
-                return concatSourceNode
-                    .Children
-                    .OfType<ParseNode<TResult>>()
-                    .Single().Value;
-            });
+                    return concatSourceNode
+                        .Children
+                        .OfType<ParseNode<TResult>>()
+                        .Single().Value;
+                });
         }
 
         /// <summary>
@@ -193,6 +194,24 @@ namespace NParse
         }
 
         /// <summary>
+        /// Gets an enumeration of the possible expressions for the specified expression.
+        /// </summary>
+        /// <typeparam name="T">The type of the result.</typeparam>
+        /// <param name="expression">The expression.</param>
+        /// <returns>The enumeration.</returns>
+        public static IEnumerable<ParseExpression<T>> GetChoiceExpressions<T>(this ParseExpression<T> expression)
+        {
+            if (expression is ChoiceParseExpression<T>)
+            {
+                return expression as ChoiceParseExpression<T>;
+            }
+            else
+            {
+                return Enumerable.Repeat(expression, 1);
+            }
+        }
+
+        /// <summary>
         /// Gets an enumeration of the concatenated expressions for the specified expression.
         /// </summary>
         /// <param name="expression">The expression.</param>
@@ -202,23 +221,6 @@ namespace NParse
             if (expression is ConcatParseExpression)
             {
                 return expression as ConcatParseExpression;
-            }
-            else
-            {
-                return Enumerable.Repeat(expression, 1);
-            }
-        }
-
-        /// <summary>
-        /// Gets an enumeration of the possible expressions for the specified expression.
-        /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns>The enumeration.</returns>
-        public static IEnumerable<ParseExpression<T>> GetChoiceExpressions<T>(this ParseExpression<T> expression)
-        {
-            if (expression is ChoiceParseExpression<T>)
-            {
-                return expression as ChoiceParseExpression<T>;
             }
             else
             {

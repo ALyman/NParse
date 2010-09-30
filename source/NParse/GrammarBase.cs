@@ -10,14 +10,9 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Linq.Expressions;
-using System.IO;
-using NParse.Expressions;
-using NParse.Ast;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using NParse.Expressions;
 
 namespace NParse
 {
@@ -27,13 +22,28 @@ namespace NParse
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public abstract class GrammarBase<TResult> : IGrammar
     {
+        private Dictionary<MethodInfo, ParseExpression> ruleCache = new Dictionary<MethodInfo, ParseExpression>();
+
+        /// <summary>
+        /// Gets or sets the whitespace regular expression.  The tokenizer should skip over this whenever it is found.
+        /// </summary>
+        /// <value>The whitespace regular expression.</value>
+        public Regex Whitespace { get; set; }
+
+        /// <summary>
+        /// Creates a parser for this grammar.
+        /// </summary>
+        /// <returns>A parser that will parse the language defined by this grammar.</returns>
+        public Parser<TResult> CreateParser()
+        {
+            return new Parser<TResult>(this, RootRule);
+        }
+
         /// <summary>
         /// The root rule used for parsing.
         /// </summary>
         /// <returns>An expression that describes how the rule is parsed.</returns>
         protected abstract ParseExpression<TResult> RootRule();
-
-        Dictionary<MethodInfo, ParseExpression> ruleCache = new Dictionary<MethodInfo, ParseExpression>();
 
         /// <summary>
         /// Parses the specified rule in the current context.
@@ -51,20 +61,5 @@ namespace NParse
             }
             return (ParseExpression<T>)result;
         }
-
-        /// <summary>
-        /// Creates a parser for this grammar.
-        /// </summary>
-        /// <returns>A parser that will parse the language defined by this grammar.</returns>
-        public Parser<TResult> CreateParser()
-        {
-            return new Parser<TResult>(this, RootRule);
-        }
-
-        /// <summary>
-        /// Gets the whitespace regular expression.  The tokenizer should skip over this whenever it is found.
-        /// </summary>
-        /// <value>The whitespace regular expression.</value>
-        public Regex Whitespace { get; set; }
     }
 }

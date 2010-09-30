@@ -30,7 +30,7 @@ namespace NParse
         /// Looks ahead in the input for the specified possibilities, and returns all of them that occur at the current position.
         /// </summary>
         /// <param name="possibilities">The possibilities.</param>
-        /// <returns></returns>
+        /// <returns>All the tokens that match at the current position.</returns>
         IEnumerable<Token> LookAhead(params Regex[] possibilities);
         /// <summary>
         /// Reads the next token from the input at the current position, returns the first match, and moves the input position to be immediatly after the returned token.

@@ -10,12 +10,10 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace NParse.Utilities
 {
-    static class TypeUtilities
+    internal static class TypeUtilities
     {
         public static IEnumerable<Type> EnumerateBaseTypes(this Type type)
         {

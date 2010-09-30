@@ -9,9 +9,6 @@
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NParse.Expressions;
 
 namespace NParse.Ast
@@ -21,12 +18,6 @@ namespace NParse.Ast
     /// </summary>
     public abstract class ParseNode
     {
-        /// <summary>
-        /// Gets or sets the expression that this ParseNode represents.
-        /// </summary>
-        /// <value>The expression.</value>
-        protected ParseExpression Expression { get; private set; }
-
         internal ParseNode(ParseExpression expression)
         {
             this.Expression = expression;
@@ -37,6 +28,22 @@ namespace NParse.Ast
         /// </summary>
         /// <value><c>true</c> if success; otherwise, <c>false</c>.</value>
         public abstract bool Success { get; }
+
+        /// <summary>
+        /// Gets the expression that this ParseNode represents.
+        /// </summary>
+        /// <value>The expression.</value>
+        protected ParseExpression Expression { get; private set; }
+
+        /// <summary>
+        /// Provides a Generic ParseNode that specifies a general failure for the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns>A ParseNode that specifies a general failure for the specified expression.</returns>
+        public static ParseNode Failed(ParseExpression expression)
+        {
+            return new FailedParseNode(expression);
+        }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -57,22 +64,29 @@ namespace NParse.Ast
         }
 
         /// <summary>
-        /// Provides a Generic ParseNode that specifies a general failure for the specified expression.
+        /// A ParseNode that represents a generic failure.
         /// </summary>
-        /// <param name="expression">The expression.</param>
-        /// <returns>A ParseNode that specifies a general failure for the specified expression.</returns>
-        public static ParseNode Failed(ParseExpression expression)
+        private class FailedParseNode : ParseNode
         {
-            return new FailedParseNode(expression);
-        }
-
-        class FailedParseNode : ParseNode
-        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="FailedParseNode"/> class.
+            /// </summary>
+            /// <param name="expression">The expression.</param>
             public FailedParseNode(ParseExpression expression)
                 : base(expression) { }
 
+            /// <summary>
+            /// Gets a value indicating whether this <see cref="ParseNode"/> was successfully parsed.
+            /// </summary>
+            /// <value><c>true</c> if success; otherwise, <c>false</c>.</value>
             public override bool Success { get { return false; } }
 
+            /// <summary>
+            /// Returns a <see cref="System.String"/> that represents this instance.
+            /// </summary>
+            /// <returns>
+            /// A <see cref="System.String"/> that represents this instance.
+            /// </returns>
             public override string ToString()
             {
                 return "<FAILED>";

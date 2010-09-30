@@ -33,7 +33,7 @@ namespace NParse.Ast
         }
 
         /// <summary>
-        /// Gets or sets the children.
+        /// Gets the children.
         /// </summary>
         /// <value>The children.</value>
         public IEnumerable<ParseNode> Children { get; private set; }

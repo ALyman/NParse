@@ -1,14 +1,4 @@
-//-----------------------------------------------------------------------
-// <copyright file="ScopeParseExpression.cs" company="Alex Lyman">
-//     Copyright (c) Alex Lyman. All rights reserved.
-// </copyright>
-// <link rel="website" href="http://github.com/ALyman/NParse" />
-// <link rel="license" href="http://creativecommons.org/licenses/BSD/" />
-// <author>Alex Lyman</author>
-// <created>28/08/2010</created>
-// <summary>no summary</summary>
-//-----------------------------------------------------------------------
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NParse.Ast;
@@ -18,26 +8,23 @@ namespace NParse.Expressions
     /// <summary>
     /// An expression that reduces the contained expression to provide a value.
     /// </summary>
-    public sealed class ScopeParseExpression : ParseExpression
+    /// <typeparam name="TSource">The type of the source.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    public sealed class ReduceParseExpression<TSource, TResult> : ParseExpression<TResult>
     {
-        private ParseExpression expression;
-        private bool isChild;
-        private Action<ParseScope> initializer;
-        private Action<ParseScope> finalizer;
+        private ParseExpression<TSource> expression;
+        private Func<ParseContext, ParseNode<TSource>, TResult> reduction;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ScopeParseExpression"/> class.
+        /// Initializes a new instance of the <see cref="ReduceParseExpression&lt;TSource, TResult&gt;"/> class.
         /// </summary>
         /// <param name="expression">The expression.</param>
-        /// <param name="isChild">if set to <c>true</c> the scope is a child scope..</param>
-        /// <param name="initializer">The initializer.</param>
-        /// <param name="finalizer">The finalizer.</param>
-        public ScopeParseExpression(ParseExpression expression, bool isChild, Action<ParseScope> initializer, Action<ParseScope> finalizer)
+        /// <param name="reduction">The reduction.</param>
+        public ReduceParseExpression(ParseExpression<TSource> expression, Func<ParseContext, ParseNode<TSource>, TResult> reduction)
         {
+            // TODO: Complete member initialization
             this.expression = expression;
-            this.isChild = isChild;
-            this.initializer = initializer;
-            this.finalizer = finalizer;
+            this.reduction = reduction;
         }
 
         /// <summary>
@@ -77,14 +64,11 @@ namespace NParse.Expressions
         /// <returns>The resulting parse node.</returns>
         protected override ParseNode ExecuteCore(ParseContext context)
         {
-            ParseScope scope = context.BeginScope(isChild);
-            if (initializer != null)
-                initializer(scope);
-            var node = expression.Execute(context);
-            if (finalizer != null)
-                finalizer(scope);
-            context.EndScope(scope);
-            return node;
+            var sourceNode = (ParseNode<TSource>)expression.Execute(context);
+            return new ReductionParseNode<TResult>(
+                this,
+                sourceNode,
+                sourceNode.Success ? reduction(context, sourceNode) : default(TResult));
         }
     }
 }

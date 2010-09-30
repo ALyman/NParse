@@ -22,7 +22,7 @@ namespace NParse
     public sealed class NotMemoizableAttribute : Attribute
     {
         /// <summary>
-        /// Marks a rule as not memoizable (it will be run in every context it is found in).
+        /// Initializes a new instance of the <see cref="NotMemoizableAttribute"/> class.
         /// </summary>
         public NotMemoizableAttribute() { }
     }

@@ -11,21 +11,17 @@
 #define INTERACTIVE
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using NParse;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Diagnostics;
+using NParse;
 
 namespace SimpleParser
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            //ParseContext.Trace = true;
             GrammarBase<Expression> grammar = new SimpleGrammar();
 #if INTERACTIVE
             do
@@ -36,11 +32,11 @@ namespace SimpleParser
                 var input = Console.ReadLine();
                 if (input == "exit") { break; }
 
-                var result = grammar
-                    .CreateParser()
-                    .Parse(new StringReader(input));
+                var parser = grammar.CreateParser();
+                ////parser.Options.Trace = true;
+                var result = parser.Parse(new StringReader(input));
 
-                while (ExecuteExpression(result.Value)) ;
+                ExecuteExpression(result.Value);
             } while (true);
 #else
             var result = grammar
@@ -50,7 +46,7 @@ namespace SimpleParser
 #endif
         }
 
-        private static bool ExecuteExpression(Expression expression)
+        private static void ExecuteExpression(Expression expression)
         {
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine(expression);
@@ -67,8 +63,6 @@ namespace SimpleParser
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine(compiledLambda.DynamicInvoke(values));
             Console.WriteLine();
-
-            return true;
         }
 
         private static double ReadVariable(ParameterExpression parameter)

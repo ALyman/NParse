@@ -10,8 +10,6 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using NParse.Ast;
 
@@ -23,14 +21,6 @@ namespace NParse.Expressions
     /// <typeparam name="TValue">The type of the value.</typeparam>
     public sealed class TokenParseExpression<TValue> : ParseExpression<TValue>
     {
-        /// <summary>
-        /// Gets a value indicating whether this instance is memoizable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
-        /// </value>
-        protected override bool IsMemoizable { get { return true; } }
-
         private Regex regex;
         private Func<Token, TValue> reduce;
 
@@ -47,15 +37,12 @@ namespace NParse.Expressions
         }
 
         /// <summary>
-        /// Executes parsing in the given context.
+        /// Gets a value indicating whether this instance is memoizable.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>The resulting parse node.</returns>
-        protected override ParseNode ExecuteCore(ParseContext context)
-        {
-            var tokenMatch = context.Tokenizer.ReadNext(regex);
-            return new TokenParseNode<TValue>(this, tokenMatch, tokenMatch.Success ? reduce(tokenMatch) : default(TValue));
-        }
+        /// <value>
+        /// <c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
+        /// </value>
+        protected override bool IsMemoizable { get { return true; } }
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -77,6 +64,17 @@ namespace NParse.Expressions
         public override IEnumerable<Regex> GetFirst()
         {
             yield return regex;
+        }
+
+        /// <summary>
+        /// Executes parsing in the given context.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>The resulting parse node.</returns>
+        protected override ParseNode ExecuteCore(ParseContext context)
+        {
+            var tokenMatch = context.Tokenizer.ReadNext(regex);
+            return new TokenParseNode<TValue>(this, tokenMatch, tokenMatch.Success ? reduce(tokenMatch) : default(TValue));
         }
     }
 }

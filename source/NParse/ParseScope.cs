@@ -8,10 +8,6 @@
 // <created>28/08/2010</created>
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections;
 
 namespace NParse
@@ -21,7 +17,7 @@ namespace NParse
     /// </summary>
     public class ParseScope
     {
-        Hashtable data = new Hashtable();
+        private Hashtable data = new Hashtable();
 
         private ParseScope parent;
 
@@ -39,6 +35,7 @@ namespace NParse
         /// <summary>
         /// Gets or sets the data with the specified key.
         /// </summary>
+        /// <param name="key">The key whose value to get or set.</param>
         /// <value>The data.</value>
         public object this[object key]
         {

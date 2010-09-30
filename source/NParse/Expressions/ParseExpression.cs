@@ -10,11 +10,10 @@
 //-----------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NParse.Ast;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
+using NParse.Ast;
 
 namespace NParse.Expressions
 {
@@ -23,21 +22,30 @@ namespace NParse.Expressions
     /// </summary>
     public abstract class ParseExpression
     {
+        private static Dictionary<string, WeakReference> literalCache = new Dictionary<string, WeakReference>();
+
+        private Dictionary<int, Tuple<ParseNode, int>> memoized = new Dictionary<int, Tuple<ParseNode, int>>();
+
         /// <summary>
-        /// Implements the operator +.
+        /// Gets a value indicating whether this instance is memoizable.
         /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
+        /// <value>
+        /// <c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
+        /// </value>
+        protected abstract bool IsMemoizable { get; }
+
+        /// <summary>
+        /// Implements the concatenation operator, +.
+        /// </summary>
+        /// <param name="left">The left-side of the concatenation.</param>
+        /// <param name="right">The right-side of the concatenation.</param>
         /// <returns>The result of the operator.</returns>
         public static ConcatParseExpression operator +(ParseExpression left, ParseExpression right)
         {
             return new ConcatParseExpression(
                 left.GetConcatenatedExpressions()
-                    .Concat(right.GetConcatenatedExpressions())
-            );
+                    .Concat(right.GetConcatenatedExpressions()));
         }
-
-        static Dictionary<string, WeakReference> literalCache = new Dictionary<string, WeakReference>();
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="System.String"/> to <see cref="NParse.Expressions.ParseExpression"/>.
@@ -56,21 +64,10 @@ namespace NParse.Expressions
 
             var result = new TokenParseExpression<string>(
                 new Regex(Regex.Escape(token)),
-                (match) => match.Text
-            );
+                (match) => match.Text);
             literalCache.Add(token, new WeakReference(result));
             return result;
         }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is memoizable.
-        /// </summary>
-        /// <value>
-        /// 	<c>true</c> if this instance is memoizable; otherwise, <c>false</c>.
-        /// </value>
-        protected abstract bool IsMemoizable { get; }
-
-        Dictionary<int, Tuple<ParseNode, int>> memoized = new Dictionary<int, Tuple<ParseNode, int>>();
 
         /// <summary>
         /// Executes parsing in the given context.
@@ -102,19 +99,11 @@ namespace NParse.Expressions
                 () =>
                 {
                     return Tuple.Create(context.Position, ParseNode.Failed(this));
-                }
-            );
+                });
 
             context.Position = tuple.Item1;
             return tuple.Item2;
         }
-
-        /// <summary>
-        /// Executes parsing in the given context.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns>The resulting parse node.</returns>
-        protected abstract ParseNode ExecuteCore(ParseContext context);
 
         /// <summary>
         /// Returns a <see cref="System.String"/> that represents this instance.
@@ -129,5 +118,12 @@ namespace NParse.Expressions
         /// </summary>
         /// <returns>The regular expressions that represent the first tokens that match this expression.</returns>
         public abstract IEnumerable<Regex> GetFirst();
+
+        /// <summary>
+        /// Executes parsing in the given context.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>The resulting parse node.</returns>
+        protected abstract ParseNode ExecuteCore(ParseContext context);
     }
 }

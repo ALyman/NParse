@@ -9,29 +9,20 @@
 // <summary>no summary</summary>
 //-----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using NParse.Ast;
 using NParse.Expressions;
-using System.IO;
 
 namespace NParse
 {
     /// <summary>
-    /// A parser
+    /// A parser for a specified grammar.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     public sealed class Parser<TResult>
     {
         private GrammarBase<TResult> grammar;
         private Func<ParseExpression<TResult>> rootRule;
-
-        /// <summary>
-        /// Gets or sets the options.
-        /// </summary>
-        /// <value>The options.</value>
-        public ParseOptions Options { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Parser&lt;TResult&gt;"/> class.
@@ -44,6 +35,12 @@ namespace NParse
             this.rootRule = rootRule;
             this.Options = new ParseOptions();
         }
+
+        /// <summary>
+        /// Gets or sets the options.
+        /// </summary>
+        /// <value>The options.</value>
+        public ParseOptions Options { get; set; }
 
         /// <summary>
         /// Parses the contents of the specified reader.
